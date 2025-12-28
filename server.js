@@ -21,17 +21,19 @@ app.post("/api/roast", async (req, res) => {
       return res.status(400).json({ error: "Name is required" });
     }
 
+    // 🔥 Random roast style
     const styles = [
       "sarcastic",
       "playful savage",
       "witty and clever",
       "dramatic and funny",
-      "friendly roast",
+      "friendly roast"
     ];
 
     const randomStyle =
       styles[Math.floor(Math.random() * styles.length)];
 
+    // 🌐 Language instruction
     let languageInstruction = "";
     if (language === "hindi") {
       languageInstruction = "Respond ONLY in Hindi (Devanagari script).";
@@ -42,10 +44,12 @@ app.post("/api/roast", async (req, res) => {
         "Respond in Hinglish (mix of Hindi and English, casual Indian tone).";
     }
 
+    // 🎅 Final prompt
     const prompt = `
 You are Santa Claus with a ${randomStyle} personality.
 Roast the user in a light-hearted, clean, Christmas-themed way.
 Make every roast DIFFERENT and CREATIVE.
+Use witty jokes, analogies, and playful sarcasm.
 Do NOT use abusive or hateful language.
 ${languageInstruction}
 End with emojis.
@@ -54,17 +58,19 @@ User name: ${name}
 `;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+       model: "gpt-4o-mini",
+
       messages: [{ role: "user", content: prompt }],
-      temperature: 1,
+      temperature: 1.0,
       max_tokens: 120,
     });
 
-    res.json({ roast: response.choices[0].message.content });
+    const roast = response.choices[0].message.content;
+    res.json({ roast });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Santa is busy 🎅" });
+    console.error("OPENAI ERROR:", error);
+    res.status(500).json({ error: "Santa is busy right now 🎅" });
   }
 });
 
@@ -72,9 +78,7 @@ app.get("/", (req, res) => {
   res.send("🎅 AI Christmas Roast Backend is running!");
 });
 
-/* ❌ REMOVE THIS */
-// app.listen(3001)
-
-/* ✅ ADD THIS */
-export default app;
-
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🔥 Backend running on port ${PORT}`);
+});
